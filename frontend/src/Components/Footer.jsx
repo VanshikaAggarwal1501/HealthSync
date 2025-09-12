@@ -7,7 +7,7 @@ const Footer = () => {
             {/* left side */}
             <div>
                 <img  className="mb-5 w-40" src={assets.logo} alt="" />
-                <p className='w-full md:w-2/3 text-gray-600 leading-6' >Prescripto has been the industry's standard project ever since the 1500's ehen an unknown printer took a gallery of type and scrambled it.</p>
+                <p className='w-full md:w-2/3 text-gray-600 leading-6' >HealthSync has been the industry's standard project ever since the 1500's ehen an unknown printer took a gallery of type and scrambled it.</p>
 
             </div>
 

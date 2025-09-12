@@ -20,88 +20,88 @@ const Appointment = () => {
         const docInfo= doctors.find(doc=> doc._id=== docId);
         setDocInfo(docInfo);
     }
-    const getAvailableSlots= async ()=>{
-        setDocSlots([]);
-        let today= new Date();
-        for(let i=1; i<=7; i++){
-            let currentDate= new Date(today);
-            currentDate.setDate(today.getDate()+i);
-            let endTime= new Date();
-            endTime.setDate(today.getDate()+i);
-            endTime.setHours(21,0,0,0);
-            if(today.getDate()===currentDate.getDate()){
-                currentDate.setHours(currentDate.getHours()>10? currentDate.getHours()+ 1: 10);
-                currentDate.setMinutes(currentDate.getMinutes()>30? 30:0);
-            }
+    // const getAvailableSlots= async ()=>{
+    //     setDocSlots([]);
+    //     let today= new Date();
+    //     for(let i=1; i<=7; i++){
+    //         let currentDate= new Date(today);
+    //         currentDate.setDate(today.getDate()+i);
+    //         let endTime= new Date();
+    //         endTime.setDate(today.getDate()+i);
+    //         endTime.setHours(21,0,0,0);
+    //         if(today.getDate()===currentDate.getDate()){
+    //             currentDate.setHours(currentDate.getHours()>10? currentDate.getHours()+ 1: 10);
+    //             currentDate.setMinutes(currentDate.getMinutes()>30? 30:0);
+    //         }
 
-            else {
-                currentDate.setHours(10);
-                currentDate.setMinutes(0);
+    //         else {
+    //             currentDate.setHours(10);
+    //             currentDate.setMinutes(0);
 
-            }
-            let timeSlots= [];
-            while(currentDate< endTime){
-                let formattedTime= currentDate.toLocaleTimeString([], {hour: '2-digit',minute: '2-digit' });
-                let day= currentDate.getDate();
-                let month= currentDate.getMonth()+1;
-                let year= currentDate.getFullYear();
-                const slotDate= day + "/"+ month + "/" + year;
-                const slotTime= formattedTime;
-                const isSlotAvailable= docInfo.slots_booked[slotDate] && docInfo.slots_booked[slotDate].includes(slotTime) ? false : true;
-                if(isSlotAvailable) {
-                    timeSlots.push(
-                    {
-                        datetime: new Date(currentDate),
-                        time: formattedTime
-                    }
-                )
+    //         }
+    //         let timeSlots= [];
+    //         while(currentDate< endTime){
+    //             let formattedTime= currentDate.toLocaleTimeString([], {hour: '2-digit',minute: '2-digit' });
+    //             let day= currentDate.getDate();
+    //             let month= currentDate.getMonth()+1;
+    //             let year= currentDate.getFullYear();
+    //             const slotDate= day + "/"+ month + "/" + year;
+    //             const slotTime= formattedTime;
+    //             const isSlotAvailable= docInfo.slots_booked[slotDate] && docInfo.slots_booked[slotDate].includes(slotTime) ? false : true;
+    //             if(isSlotAvailable) {
+    //                 timeSlots.push(
+    //                 {
+    //                     datetime: new Date(currentDate),
+    //                     time: formattedTime
+    //                 }
+    //             )
 
-                }
-                currentDate.setMinutes(currentDate.getMinutes()+30);
-            }
-            setDocSlots(prev=>([...prev, timeSlots]))
-        }
+    //             }
+    //             currentDate.setMinutes(currentDate.getMinutes()+30);
+    //         }
+    //         setDocSlots(prev=>([...prev, timeSlots]))
+    //     }
+    // }
+
+    const getAvailableSlots = async () => {
+  let newSlots = [];
+
+  for (let i = 1; i <= 7; i++) {
+    let date = new Date();
+    date.setHours(0, 0, 0, 0);
+    date.setDate(date.getDate() + i);
+
+    let slotStart = new Date(date);
+    let slotEnd = new Date(date);
+    slotEnd.setHours(21, 0, 0, 0);
+
+    if (i === 0) {
+      const now = new Date();
+      slotStart.setHours(now.getHours() + 1);
+      slotStart.setMinutes(now.getMinutes() > 30 ? 30 : 0);
+    } else {
+      slotStart.setHours(10, 0, 0, 0);
     }
 
-//     const getAvailableSlots = async () => {
-//   let newSlots = [];
+    let timeSlots = [];
 
-//   for (let i = 0; i < 7; i++) {
-//     let date = new Date();
-//     date.setHours(0, 0, 0, 0);
-//     date.setDate(date.getDate() + i);
+    while (slotStart < slotEnd) {
+      timeSlots.push({
+        datetime: new Date(slotStart),
+        time: slotStart.toLocaleTimeString([], {
+          hour: '2-digit',
+          minute: '2-digit',
+        }),
+      });
+      slotStart.setMinutes(slotStart.getMinutes() + 30);
+    }
 
-//     let slotStart = new Date(date);
-//     let slotEnd = new Date(date);
-//     slotEnd.setHours(21, 0, 0, 0);
+    // Always push slot data for every day, even if empty
+    newSlots.push(timeSlots);
+  }
 
-//     if (i === 0) {
-//       const now = new Date();
-//       slotStart.setHours(now.getHours() + 1);
-//       slotStart.setMinutes(now.getMinutes() > 30 ? 30 : 0);
-//     } else {
-//       slotStart.setHours(10, 0, 0, 0);
-//     }
-
-//     let timeSlots = [];
-
-//     while (slotStart < slotEnd) {
-//       timeSlots.push({
-//         datetime: new Date(slotStart),
-//         time: slotStart.toLocaleTimeString([], {
-//           hour: '2-digit',
-//           minute: '2-digit',
-//         }),
-//       });
-//       slotStart.setMinutes(slotStart.getMinutes() + 30);
-//     }
-
-//     // Always push slot data for every day, even if empty
-//     newSlots.push(timeSlots);
-//   }
-
-//   setDocSlots(newSlots);
-// };
+  setDocSlots(newSlots);
+};
 
     const bookAppointment = async()=>{
         if(!token){
